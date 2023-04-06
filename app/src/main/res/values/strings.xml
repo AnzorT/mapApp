@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">mapApp</string>
+    <string name="map_text">Map</string>
+    <string name="bluetooth">Bluetooth</string>
 </resources>
