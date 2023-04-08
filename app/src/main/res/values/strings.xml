@@ -5,4 +5,6 @@
     <string name="btn_start_scan_text">Scan for devices</string>
     <string name="tw_scan_results_title">Scan Result</string>
     <string name="bluetooth_filter_hint">Filter By Mac Address</string>
+    <string name="missing_permissions_message">\"In order for the app to work, the following permissions are needed:\n\nLocation\nBluetooth\nNotifications\n\n\nThe app will now close\"</string>
+    <string name="missing_permissions_message_title">Missing Permissions</string>
 </resources>

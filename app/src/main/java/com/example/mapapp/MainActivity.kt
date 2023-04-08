@@ -1,7 +1,7 @@
 package com.example.mapapp
 
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -14,14 +14,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(!hasLocationPermission()) {
+            displayMissingPermissionsAlert()
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupView()
     }
-
     private fun setupView() {
         val navHostFragment =
             (supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment)
         binding.bottomNavView.setupWithNavController(navHostFragment.navController)
+    }
+
+    private fun displayMissingPermissionsAlert() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.missing_permissions_message_title)
+            .setMessage(resources.getString(R.string.missing_permissions_message))
+            .setPositiveButton("Confirm") { _, _ ->
+                finish()
+            }.show()
     }
 }

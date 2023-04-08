@@ -2,6 +2,7 @@ package com.example.mapapp.ui.mapscreen
 
 import android.Manifest
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.example.mapapp.MainActivity
 import com.example.mapapp.R
 import com.example.mapapp.databinding.FragmentMapBinding
 import com.example.mapapp.hasLocationPermission
+import com.example.mapapp.isLocationServiceRunning
 import com.example.mapapp.repository.location.room.LastLocation
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -34,24 +36,24 @@ class MapFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewModelFactory = MapViewModelFactory(application = (activity as MainActivity).application)
         viewModel = ViewModelProvider(this, viewModelFactory)[MapViewModel::class.java]
-        ActivityCompat.requestPermissions(
-            activity as MainActivity,
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            0
-        )
+//        ActivityCompat.requestPermissions(
+//            activity as MainActivity,
+//            arrayOf(
+//                Manifest.permission.ACCESS_FINE_LOCATION,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ),
+//            0
+//        )
         setupView()
         subscribeObserver()
     }
 
     private fun setupView() {
         context?.apply {
-            if(hasLocationPermission()) {
+            if(hasLocationPermission() && !isLocationServiceRunning()) {
                 viewModel.startLocationService(requireActivity())
             } else {
-
+                Log.d("LocationServiceRunning:", "service is already running")
             }
         }
     }

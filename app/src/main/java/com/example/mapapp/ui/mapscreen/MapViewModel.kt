@@ -36,7 +36,6 @@ val liveData = MutableLiveData<List<LastLocation>>()
         }
     }
 
-
     private fun addLocation(location: LastLocation) {
         liveData.value?.apply {
             if(size >= 20) {
