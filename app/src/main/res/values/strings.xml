@@ -2,4 +2,7 @@
     <string name="app_name">mapApp</string>
     <string name="map_text">Map</string>
     <string name="bluetooth">Bluetooth</string>
+    <string name="btn_start_scan_text">Scan for devices</string>
+    <string name="tw_scan_results_title">Scan Result</string>
+    <string name="bluetooth_filter_hint">Filter By Mac Address</string>
 </resources>
