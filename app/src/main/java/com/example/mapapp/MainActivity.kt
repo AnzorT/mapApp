@@ -1,6 +1,7 @@
 package com.example.mapapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -23,5 +24,4 @@ class MainActivity : AppCompatActivity() {
             (supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment)
         binding.bottomNavView.setupWithNavController(navHostFragment.navController)
     }
-
 }
