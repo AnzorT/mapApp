@@ -5,7 +5,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
-import com.example.mapapp.ui.mapscreen.services.LocationService
+import com.example.mapapp.ui.mapscreen.services.locationservice.LocationService
 
 fun Context.hasLocationPermission(): Boolean {
     return ContextCompat.checkSelfPermission(

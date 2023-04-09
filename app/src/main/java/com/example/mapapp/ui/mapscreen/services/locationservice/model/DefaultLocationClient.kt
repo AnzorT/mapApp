@@ -1,4 +1,4 @@
-package com.example.mapapp.ui.mapscreen
+package com.example.mapapp.ui.mapscreen.services.locationservice.model
 
 import android.annotation.SuppressLint
 import android.location.Location

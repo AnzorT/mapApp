@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothManager
 import android.os.Looper
 import com.example.mapapp.ui.bluetoothscreen.blescanner.model.BleScanCallback
 
-
 class BleScanManager(
     btManager: BluetoothManager,
     private val scanPeriod: Long = DEFAULT_SCAN_PERIOD,

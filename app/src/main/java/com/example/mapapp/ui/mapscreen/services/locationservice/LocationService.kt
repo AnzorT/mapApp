@@ -1,4 +1,4 @@
-package com.example.mapapp.ui.mapscreen.services
+package com.example.mapapp.ui.mapscreen.services.locationservice
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,28 +9,27 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.mapapp.LocationLiveData
 import com.example.mapapp.R
-import com.example.mapapp.repository.location.room.LastLocation
-import com.example.mapapp.ui.mapscreen.DefaultLocationClient
-import com.example.mapapp.ui.mapscreen.LocationClient
+import com.example.mapapp.ui.mapscreen.room.UserLocations
+import com.example.mapapp.ui.mapscreen.services.locationservice.model.DefaultLocationClient
+import com.example.mapapp.ui.mapscreen.services.locationservice.model.LocationBinder
+import com.example.mapapp.ui.mapscreen.services.locationservice.model.LocationClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import java.util.*
 
 class LocationService: Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: LocationClient
-
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
+    private val _userLastLocationsMutableSharedFlow = MutableSharedFlow<UserLocations>()
+    val userLastLocationsFlow = _userLastLocationsMutableSharedFlow.asSharedFlow()
+    override fun onBind(p0: Intent?): IBinder {
+        return LocationBinder(this)
     }
 
     override fun onCreate() {
@@ -62,25 +61,22 @@ class LocationService: Service() {
             notificationManager.createNotificationChannel(channel)
         }
         locationClient
-//            .getLocationUpdates(60000L)
-            .getLocationUpdates(10L)
+            .getLocationUpdates(60000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
                 val lat = location.latitude.toString()
                 val long = location.longitude.toString()
-
                 val updatedNotification = notification.setContentText(
                     "Location: ($lat, $long)"
                 )
                 Log.d("Anzor","Anzor")
-                LocationLiveData.setUserLocationMutableSharedFlow(
-                    LastLocation(
-                        Calendar.getInstance().time.toString(),
-                        location.latitude + LocationLiveData.pos,
-                        location.longitude
-                    )
+                _userLastLocationsMutableSharedFlow.emit(
+                    UserLocations(
+                    Calendar.getInstance().time.toString(),
+                    location.latitude,
+                    location.longitude
                 )
-                LocationLiveData.pos = LocationLiveData.pos + 1
+                )
                 notificationManager.notify(1, updatedNotification.build())
 
             }
