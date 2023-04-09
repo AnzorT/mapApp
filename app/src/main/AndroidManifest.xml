@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
+        android:name=".ui.mapscreen.room.applications.LocationApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MapApp"
         tools:targetApi="31">
-        <service android:name=".ui.mapscreen.services.LocationService" android:foregroundServiceType="location" />
+        <service android:name=".ui.mapscreen.services.locationservice.LocationService" android:foregroundServiceType="location" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCJ-k8ZyX8j6gLf2yxZScwMJq_hR4KIa8E"/>
