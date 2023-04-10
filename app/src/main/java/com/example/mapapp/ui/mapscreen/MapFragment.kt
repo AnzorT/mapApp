@@ -1,6 +1,7 @@
 package com.example.mapapp.ui.mapscreen
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,10 +44,12 @@ class MapFragment : Fragment() {
                 viewModel.startLocationService(requireActivity())
             }
         }
+        viewModel.bindLocationServiceToViewModel(requireActivity())
     }
 
     private fun subscribeObserver() {
         viewModel.lastLocationsListLiveData.observe(viewLifecycleOwner) { locationsList ->
+            Log.d("MyTesting","${locationsList.size}")
             setGoogleMaps(locationsList)
         }
     }
@@ -64,5 +67,10 @@ class MapFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+//        viewModel.stopLocationService(requireActivity())
+        super.onDestroy()
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,22 +26,36 @@ class MapViewModel(repository: UserLastLocationRepository) : ViewModel() {
             val locationForegroundService = locationBinder.getService()
             viewModelScope.launch {
                 locationForegroundService.userLastLocationsFlow.collect {  location ->
+                    Log.d("MyTesting","UPDATING THE ROOM")
                     addLocation(location)
                     getLastLocationsList()
                 }
             }
         }
-        override fun onServiceDisconnected(name: ComponentName?) {}
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
     }
 
     fun startLocationService(requireActivity: FragmentActivity) {
         Intent(requireActivity, LocationService::class.java).apply {
             requireActivity.startService(this)
+        }
+    }
+
+    fun bindLocationServiceToViewModel(requireActivity: FragmentActivity) {
+        Intent(requireActivity, LocationService::class.java).apply {
             requireActivity.bindService(
                 this,
                 locationForegroundServiceConnection,
                 Context.BIND_AUTO_CREATE
             )
+        }
+    }
+
+    fun stopLocationService(requireActivity: FragmentActivity) {
+        Intent(requireActivity, LocationService::class.java).apply {
+            requireActivity.stopService(this)
         }
     }
 

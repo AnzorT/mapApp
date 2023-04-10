@@ -35,7 +35,7 @@ class BluetoothFragment : Fragment() {
 
     private fun setupView() {
 
-        foundDevices = BleDevice.createBleDevicesList(binding.editTextFilter.text.toString())
+        foundDevices = BleDevice.createBleDevicesList()
         val adapter = BleDeviceAdapter(foundDevices)
         binding.rvFoundDevices.adapter = adapter
         binding.rvFoundDevices.layoutManager = LinearLayoutManager(context)
@@ -62,6 +62,14 @@ class BluetoothFragment : Fragment() {
 
         binding.btnStartScan.setOnClickListener {
             bleScanManager.scanBleDevices()
+        }
+
+        binding.btnFilter.setOnClickListener {
+            val filterText = binding.editTextFilter.text.toString()
+            val filteredList = foundDevices.filter {
+                it.name.contains(filterText, true)
+            }
+            adapter.setData(filteredList)
         }
     }
 }

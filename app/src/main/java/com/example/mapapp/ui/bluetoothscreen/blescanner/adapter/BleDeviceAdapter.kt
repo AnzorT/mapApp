@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mapapp.R
 import com.example.mapapp.ui.bluetoothscreen.blescanner.model.BleDevice
 
-class BleDeviceAdapter(private val devices: List<BleDevice>) : RecyclerView.Adapter<BleDeviceAdapter.ViewHolder>() {
+class BleDeviceAdapter(private val devices: MutableList<BleDevice>) : RecyclerView.Adapter<BleDeviceAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
-        val deviceView = inflater.inflate(R.layout.device_row_layout, parent, false)
+        val deviceView = inflater.inflate(R.layout.ble_devices_adapter, parent, false)
         return ViewHolder(deviceView)
     }
 
@@ -25,6 +25,12 @@ class BleDeviceAdapter(private val devices: List<BleDevice>) : RecyclerView.Adap
 
     override fun getItemCount(): Int {
         return devices.size
+    }
+
+    fun setData(filteredList: List<BleDevice>) {
+        devices.clear()
+        devices.addAll(filteredList)
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

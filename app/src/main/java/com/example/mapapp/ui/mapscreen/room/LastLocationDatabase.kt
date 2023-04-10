@@ -18,7 +18,7 @@ abstract class LastLocationDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     LastLocationDatabase::class.java,
-                    "book_database"
+                    "test2_locations_database"
                 ).allowMainThreadQueries().build()
                 INSTANCE = instance
                 instance
