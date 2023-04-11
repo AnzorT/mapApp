@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(!hasLocationPermission()) {
+        if(!isLocationPermission()) {
             displayMissingPermissionsAlert()
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.missing_permissions_message_title)
             .setMessage(resources.getString(R.string.missing_permissions_message))
-            .setPositiveButton("Confirm") { _, _ ->
+            .setPositiveButton("Confirm") { dialog, _ ->
+                dialog.dismiss()
                 finish()
             }.show()
     }

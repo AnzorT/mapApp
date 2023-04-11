@@ -66,7 +66,7 @@ class LocationService: Service() {
             notificationManager.createNotificationChannel(channel)
         }
         locationClient
-            .getLocationUpdates(600L)
+            .getLocationUpdates(60000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
                 val newLocation = UserLocations(
@@ -78,7 +78,7 @@ class LocationService: Service() {
                     "Location: (${newLocation.latitude}, ${newLocation.longitude})"
                 )
                 if(isAppClosed()) {
-                    Log.d("MyTesting","APPISNOTRUNNING")
+                    Log.d("flowUpdate:","APPISNOTRUNNING")
                     val db: LastLocationDatabase = LastLocationDatabase.getDatabase(applicationContext)
                     val locationDao: LocationDao = db.LocationDao()
                     locationDao.getAll().apply {
@@ -88,7 +88,7 @@ class LocationService: Service() {
                     }
                     locationDao.addLocation(newLocation)
                 } else {
-                    Log.d("MyTesting","APPISRUNNING")
+                    Log.d("flowUpdate:","APPISRUNNING")
                     _userLastLocationsMutableSharedFlow.emit(newLocation)
                     notificationManager.notify(1, updatedNotification.build())
                 }

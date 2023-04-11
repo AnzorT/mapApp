@@ -6,20 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mapapp.R
 import com.example.mapapp.databinding.FragmentBluetoothBinding
+import com.example.mapapp.isNearbyDevicesPermission
 import com.example.mapapp.ui.bluetoothscreen.blescanner.adapter.BleDeviceAdapter
-import com.example.mapapp.ui.bluetoothscreen.blescanner.model.BleDevice
-import com.example.mapapp.ui.bluetoothscreen.blescanner.model.BleScanCallback
 
 class BluetoothFragment : Fragment() {
-
-
     private lateinit var binding: FragmentBluetoothBinding
-    private lateinit var btManager: BluetoothManager
-    private lateinit var bleScanManager: BleScanManager
-    private lateinit var foundDevices: MutableList<BleDevice>
+    private lateinit var viewModel: BluetoothViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -34,42 +32,58 @@ class BluetoothFragment : Fragment() {
     }
 
     private fun setupView() {
+        viewModel = ViewModelProvider(this)[BluetoothViewModel::class.java]
+        val adapter = setAdapter()
+        setOnClickListeners(adapter)
 
-        foundDevices = BleDevice.createBleDevicesList()
-        val adapter = BleDeviceAdapter(foundDevices)
+        getSystemService(requireContext(), BluetoothManager::class.java)?.let { manager ->
+            viewModel.btManager = manager
+        }
+        viewModel.setBleScanManager(adapter)
+        with(viewModel.bleScanManager.beforeScanActions) {
+            this.add { binding.btnStartScan.isEnabled = false }
+            this.add {
+                viewModel.foundDevices.clear()
+                adapter.notifyDataSetChanged()
+            }
+            this.add { binding.btnStartScan.isEnabled = true }
+        }
+
+    }
+
+    private fun setAdapter(): BleDeviceAdapter {
+        val adapter = BleDeviceAdapter(viewModel.foundDevices)
         binding.rvFoundDevices.adapter = adapter
         binding.rvFoundDevices.layoutManager = LinearLayoutManager(context)
-        getSystemService(requireContext(), BluetoothManager::class.java)?.let { manager ->
-            btManager = manager
-        }
-        bleScanManager = BleScanManager(btManager, 5000, scanCallback = BleScanCallback({
-            val name = it?.device?.address
-            if (name.isNullOrBlank()) return@BleScanCallback
+        return adapter
+    }
 
-            val device = BleDevice(name)
-            if (!foundDevices.contains(device)) {
-                foundDevices.add(device)
-                adapter.notifyItemInserted(foundDevices.size - 1)
+    private fun setOnClickListeners(adapter: BleDeviceAdapter) {
+        with(binding) {
+            btnStartScan.setOnClickListener {
+                if(requireActivity().isNearbyDevicesPermission()) {
+                    viewModel.bleScanManager.scanBleDevices()
+                } else {
+                    displayMissingPermissionsAlert()
+                }
             }
-        }))
-
-        bleScanManager.beforeScanActions.add { binding.btnStartScan.isEnabled = false }
-        bleScanManager.beforeScanActions.add {
-            foundDevices.clear()
-            adapter.notifyDataSetChanged()
-        }
-        bleScanManager.afterScanActions.add { binding.btnStartScan.isEnabled = true }
-
-        binding.btnStartScan.setOnClickListener {
-            bleScanManager.scanBleDevices()
-        }
-
-        binding.btnFilter.setOnClickListener {
-            val filterText = binding.editTextFilter.text.toString()
-            val filteredList = foundDevices.filter {
-                it.name.contains(filterText, true)
+            btnFilter.setOnClickListener {
+                editTextFilter.text.toString().let { filter ->
+                    if(filter.isNotBlank()) {
+                        adapter.setData(viewModel.getFilteredDevicesList(filter))
+                    }
+                }
             }
-            adapter.setData(filteredList)
         }
     }
+
+    private fun displayMissingPermissionsAlert() {
+        AlertDialog.Builder(requireActivity())
+            .setTitle(R.string.missing_permissions_message_title)
+            .setMessage(resources.getString(R.string.missing_bluetooth_permissions_message))
+            .setPositiveButton("Confirm") { dialog, _ ->
+                dialog.dismiss()
+            }.show()
+    }
+
 }

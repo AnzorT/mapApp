@@ -26,7 +26,7 @@ class MapViewModel(repository: UserLastLocationRepository) : ViewModel() {
             val locationForegroundService = locationBinder.getService()
             viewModelScope.launch {
                 locationForegroundService.userLastLocationsFlow.collect {  location ->
-                    Log.d("MyTesting","UPDATING THE ROOM")
+                    Log.d("flowUpdate:","UPDATING THE ROOM")
                     addLocation(location)
                     getLastLocationsList()
                 }

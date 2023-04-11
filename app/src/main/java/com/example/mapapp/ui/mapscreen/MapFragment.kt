@@ -10,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.mapapp.MainActivity
 import com.example.mapapp.R
 import com.example.mapapp.databinding.FragmentMapBinding
-import com.example.mapapp.hasLocationPermission
+import com.example.mapapp.isLocationPermission
 import com.example.mapapp.isLocationServiceRunning
 import com.example.mapapp.ui.mapscreen.room.UserLocations
 import com.example.mapapp.ui.mapscreen.room.applications.LocationApplication
@@ -40,7 +40,7 @@ class MapFragment : Fragment() {
 
     private fun setupView() {
         context?.apply {
-            if(hasLocationPermission() && !isLocationServiceRunning()) {
+            if(isLocationPermission() && !isLocationServiceRunning()) {
                 viewModel.startLocationService(requireActivity())
             }
         }
@@ -49,7 +49,7 @@ class MapFragment : Fragment() {
 
     private fun subscribeObserver() {
         viewModel.lastLocationsListLiveData.observe(viewLifecycleOwner) { locationsList ->
-            Log.d("MyTesting","${locationsList.size}")
+            Log.d("flowUpdate:","${locationsList.size} last locations")
             setGoogleMaps(locationsList)
         }
     }
@@ -67,10 +67,5 @@ class MapFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-//        viewModel.stopLocationService(requireActivity())
-        super.onDestroy()
     }
 }
